@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * @author Done
- *
- */
-module TranslationService {
-}
