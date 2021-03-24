@@ -6,13 +6,12 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 public class TranslatorAgents extends Agent {
 	public void setup()
-	{
-		System.out.println("Tranlator" + getAID().getName());
+	{ 
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType("Translator");
-		sd.setName("TheFirst");
+		sd.setName(getLocalName()+"AM");
 		dfd.addServices(sd);
 		try {
 			DFService.register(this, dfd);

@@ -7,6 +7,5 @@ public class TranslationRequestInfo {
 	{	
 		this.language = lan;
 		this.price = payment;
-		
 	}
 }
