@@ -1,3 +1,4 @@
+import java.awt.EventQueue;
 import java.util.HashSet;
 
 import jade.core.Agent;
@@ -19,37 +20,49 @@ public class UserAgent extends Agent{
 
 	private UserAgent agent = this;
 	public HashSet<DFAgentDescription> TranslationServiceList = new HashSet<DFAgentDescription>();
-	public Set<String> elgibleTranslator = new HashSet<String>(); 
+	public Set<String> elgibleTranslator = new HashSet<String>();
+	private TranslationView ui;
 	public void setup()
 	{
-		System.out.println("User---" + getAID().getName());
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.setName(getAID());
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType("User");
-		sd.setName("TheUser");
-		dfd.addServices(sd);
-		try {
-			DFService.register(this, dfd);
-		}
-		catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-		addBehaviour(new TranslateWord());
-		addBehaviour(new TranslateWord());
-		
-		
+//		System.out.println("User---" + getAID().getName());
+//		DFAgentDescription dfd = new DFAgentDescription();
+//		dfd.setName(getAID());
+//		ServiceDescription sd = new ServiceDescription();
+//		sd.setType("User");
+//		sd.setName("TheUser");
+//		dfd.addServices(sd);
+//		try {
+//			DFService.register(this, dfd);
+//		}
+//		catch (FIPAException fe) {
+//			fe.printStackTrace();
+//		}
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			     public void run() {
+			       System.out.println(agent + "Creating Music Seeker UI...");
+			       try {
+			         ui = new TranslationView(agent);
+			         ui.setVisible(true);
+			       } catch (Exception e) {
+			    	   System.out.println(e+ "Couldn't create UI!");
+			       }
+			     }
+			   });
+		addBehaviour(new TranslatorList());					
 	}
-	public void takeDown()
-	{
-		System.out.println("User Closed" + getAID().getName());
-	}
+
+		    public void takeDown()
+			{
+				System.out.println("Translator Closed" + getAID().getName());
+			}
+
 	
-	 public final class TranslateWord extends SequentialBehaviour {
+	public class TranslateWord extends SequentialBehaviour {
 		    public TranslateWord() {
-//		      super.addSubBehaviour(new TranslatorList());
-		      super.addSubBehaviour(new LookForTranslator("Amhairc"));
-		      super.addSubBehaviour(new ResponseFromTranslators());
+		      
+		      super.addSubBehaviour(new LookForTranslator("Am",80));
+//		      super.addSubBehaviour(new ResponseFromTranslators());
 		    }
 	 }
 	public class TranslatorList extends TickerBehaviour 
@@ -73,7 +86,7 @@ public class UserAgent extends Agent{
 				for(DFAgentDescription item : result )
 				{
 					TranslationServiceList.add(item);
-					System.out.println(item.getName().getLocalName());
+					System.out.println("wer"+item.getName().getLocalName());
 				}
 			}
 			catch (FIPAException fe) {
@@ -81,36 +94,71 @@ public class UserAgent extends Agent{
 			}
 	}
 	}
-	public class LookForTranslator extends OneShotBehaviour
+	
+//	public class LookForTranslator extends OneShotBehaviour
+//	{
+//
+//		private String theLanguage;
+//		private float price;
+//		public LookForTranslator(String theLanguage,float price)
+//		{
+//			this.theLanguage = theLanguage;
+//			this.price = price;
+//		}
+//		@Override
+//		public void action() {
+//			// TODO Auto-generated method stub
+//			 System.out.println(agent + " Sending language request to translaters ");
+//		     ACLMessage msg = new ACLMessage(ACLMessage.CFP);
+//		      for(DFAgentDescription df: TranslationServiceList) {
+//		        msg.addReceiver(df.getName());
+//		      }
+//		      try {
+//		        msg.setContentObject(new TranslationRequestInfo(theLanguage,price));
+//		        agent.send(msg);
+//		      } catch (Exception e) {
+//		        System.out.println(e+"Couldn't send language request to Translator.");
+//		      }
+//		    }
+//		}
+	
+	
+	public class LookForTranslator extends CyclicBehaviour  
 	{
 
 		private String theLanguage;
-		public LookForTranslator(String theLanguage)
+		private float price;
+		public LookForTranslator(String theLanguage,float price)
 		{
 			this.theLanguage = theLanguage;
+			this.price = price;
 		}
 		@Override
 		public void action() {
 			// TODO Auto-generated method stub
-			 System.out.println(agent + " Sending language request to translaters ");
+			 System.out.println(agent + " Searching for translator ");
 		     ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 		      for(DFAgentDescription df: TranslationServiceList) {
 		        msg.addReceiver(df.getName());
 		      }
 		      try {
-		        msg.setContentObject(theLanguage);
+		    	System.out.println("Once");
+		        msg.setContentObject(new TranslationRequestInfo(theLanguage,price));
 		        agent.send(msg);
+		        addBehaviour(new ResponseFromTranslators());
 		      } catch (Exception e) {
 		        System.out.println(e+"Couldn't send language request to Translator.");
 		      }
 		    }
-		}
+	 }
+	
 	public class ResponseFromTranslators extends SimpleBehaviour {
 		
 		 private int translatorCount = 0;
 		 private long startTime;
 		 private long timeOut = 20000;
 		 private long wait = 1000;
+		 private final long TIMEOUT_MS = 15000;
 		 
 		
 		 public ResponseFromTranslators() {
@@ -121,12 +169,13 @@ public class UserAgent extends Agent{
 		public void action() {
 			// TODO Auto-generated method stub
 			System.out.println(agent + "Receving language request.. " + translatorCount);
-			ACLMessage msg = myAgent.receive();  // myagent and agent
+			ACLMessage msg = agent.receive();  // myagent and agent
 			if (msg != null) 
 			{
 				try {
 					HashSet<String> translatorReturned = (HashSet<String>) msg.getContentObject();
 					elgibleTranslator.addAll(translatorReturned);
+					
 					System.out.println("name");
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -134,18 +183,29 @@ public class UserAgent extends Agent{
 					System.out.println(agent + " Couldn't collect the translators language results.");
 				}
 			} else {
-				System.out.println("No message");
-				block(wait);
+				System.out.println("No messageL");
+				block();
 			}
-			}
+		}
 	
 
 		@Override
 		public boolean done() {
 			// TODO Auto-generated method stub
-			return false;
+		    	
+			return true;
 		} 
 		
 	}
+	
+	 public class ShutdownAgent extends OneShotBehaviour {
+
+		    @Override
+		    public void action() {
+		   agent.doDelete();
+  }
 }
+}
+	
+    
 

@@ -1,3 +1,5 @@
+import java.awt.EventQueue;
+
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -8,6 +10,7 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
+
 
 public class Main {
 
@@ -26,24 +29,36 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		AgentController Translator;
-		AgentController User1;
+		
+		//Amharic Translator 1
+		AgentController TranslatorAm;
+		
 		try {
-			Translator = container.createNewAgent("Samuel","TranslatorAgents",null);
-			Translator.start();
-		} catch (StaleProxyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			User1 = container.createNewAgent("Muva","UserAgent",null);
-			User1.start();
+			TranslatorAm = container.createNewAgent("AmharicTranslator8","TranslatorAgents",null);
+			TranslatorAm.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-	   
+		//Oromic Translator 13
+		AgentController TranslatorOr;
+		try {
+			TranslatorOr = container.createNewAgent("OromoTranslator87","TranslatorAgents",null);
+			TranslatorOr.start();
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		AgentController User;
+		try {
+			User = container.createNewAgent("UserBot","UserAgent",null);
+			User.start();
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
