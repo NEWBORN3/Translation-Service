@@ -16,11 +16,13 @@ import javax.swing.border.EmptyBorder;
 
 public class TranslationView extends JFrame {
 	  JTextField englishWord;
-	  
 	  JComboBox languagesList;
 	  JPanel contentPane;
 	  List console;
 	  JButton search;
+	  public void addMessageToConsole(String message) {
+	        console.add(message);
+	      }
 	  public TranslationView(final UserAgent agent) {
 		    setResizable(false);
 		    addWindowListener(new WindowAdapter() {
@@ -61,37 +63,30 @@ public class TranslationView extends JFrame {
 		 
 		    
 		    search = new JButton("Translate!");
-//		    search.addActionListener(new ActionListener() {
-//		      @Override
-////		      public void actionPerformed(ActionEvent e) {
-////		       search.setEnabled(false);
-////		 
-////		       Song.Genre genre = (Song.Genre)musicType.getSelectedItem();
-////		       int minRatingI, maxSongCountI;
-////		       float maxBudgetPerSongI, totalBudgetI;
-////		       try {
-////		         minRatingI = Integer.parseInt(minRating.getText());
-////		         maxSongCountI = Integer.parseInt(maxSongCount.getText());
-////		         maxBudgetPerSongI = Float.parseFloat(maxBudgetPerSong.getText());
-////		         totalBudgetI = Float.parseFloat(totalBudget.getText());
-////		         
-////		         if(maxSongCountI <= 0 || minRatingI < 0 || minRatingI > 5 || totalBudgetI < 0 || maxBudgetPerSongI < 0 || totalBudgetI < maxBudgetPerSongI) {
-////		           Logger.warn(agent, "Inputs are logically invalid.");
-////		           enableUI();
-////		           return;
-////		         }
-////		       } catch (NumberFormatException ex) {
-////		        console.add("Numbers are not numbers.");
-////		        Logger.error(agent, ex, "Numbers are not numbers.");
-////		        enableUI();
-////		        return;
-////		       }
-////		       
-////		       disableUI();
-////		       console.removeAll();
-////		       agent.addBehaviour(agent.new FindAndPurchaseMusics(genre, maxBudgetPerSongI, maxSongCountI, minRatingI, totalBudgetI));
-////		      }
-////		    });
+		    search.addActionListener(new ActionListener() {
+		      @Override
+		      public void actionPerformed(ActionEvent e) {
+		       search.setEnabled(false);
+		 
+		       TranslationService.Language lan = (TranslationService.Language)languagesList.getSelectedItem();
+		       String word;
+	
+		       try {
+		         word = englishWord.getText();
+		        
+	           
+	         }
+	       catch (StringIndexOutOfBoundsException ex) {
+	        console.add("Not a word");
+	        System.out.println(agent + "Not a word");
+	        
+	        return;
+	       }
+	       
+	       console.removeAll();
+	       agent.addBehaviour(agent.new TranslateWord(lan, word));
+	      }
+	    });
 		    
 		    search.setBounds(450, 80, 170, 26);
 //		    16, 81, 170, 16
@@ -114,5 +109,6 @@ public class TranslationView extends JFrame {
 		    for(TranslationService.Language l: TranslationService.Language.values()) {
 		    	languagesList.addItem(l);
 		    }
+		    
 	  }
 }

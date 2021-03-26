@@ -6,7 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/Software Agents/JADE-all-4.5.0_2/JADE-bin-4.5.0/jade/lib/jade.jar"/>
+	<classpathentry kind="lib" path="C:/Users/dell/Pictures/New folder/Software Agents/JADE-all-4.5.0_2/JADE-bin-4.5.0/jade/lib/jade.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JADE"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

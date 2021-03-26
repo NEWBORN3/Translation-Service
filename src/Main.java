@@ -34,23 +34,40 @@ public class Main {
 		AgentController TranslatorAm;
 		
 		try {
-			TranslatorAm = container.createNewAgent("AmharicTranslator8","TranslatorAgents",null);
+			TranslatorAm = container.createNewAgent("AM-40 Amharic Translator","TranslatorAgents",null);
 			TranslatorAm.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	    AgentController TranslatorAmTwo;
 		
-		//Oromic Translator 13
+		try {
+			TranslatorAmTwo = container.createNewAgent("AM-30 Amharic Translator","TranslatorAgents",null);
+			TranslatorAmTwo.start();
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		//Oromic Translator 13
 		AgentController TranslatorOr;
 		try {
-			TranslatorOr = container.createNewAgent("OromoTranslator87","TranslatorAgents",null);
+			TranslatorOr = container.createNewAgent("OR-02 Oromo Translator","TranslatorAgents",null);
 			TranslatorOr.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		AgentController TranslatorTr;
+		try {
+			TranslatorTr = container.createNewAgent("TR-09 Tigregena Translator","TranslatorAgents",null);
+			TranslatorTr.start();
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		
 		AgentController User;
 		try {
 			User = container.createNewAgent("UserBot","UserAgent",null);

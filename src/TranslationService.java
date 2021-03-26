@@ -10,6 +10,12 @@ public class TranslationService implements Cloneable, Serializable  {
 	    this.lang = lang;
 	    this.price = price;
 	  }
+	public TranslationService(Language lang, float price) {
+	    super();
+	    this.word = null;
+	    this.lang = lang;
+	    this.price = price;
+	  }
 	public Language getLanguage() {
 	    return this.lang;
 	}
@@ -24,6 +30,6 @@ public class TranslationService implements Cloneable, Serializable  {
 	public TranslationService clone() {
 	    return new TranslationService(this.getWord(), this.getLanguage(), this.getPrice());
 	}
-	public static enum Language { Amharic, Oromifa, Tigirigna,}
+	public static enum Language { Amharic, Oromifa, Tigirigna }
 	
 }

@@ -13,13 +13,11 @@ import jade.lang.acl.UnreadableException;
 
 public class TranslatorAgents extends Agent {
 	private TranslatorAgents agent = this;
-	private Set<TranslationService> serviceList = new HashSet<TranslationService>();
+	private Set<TranslationProvideInfo> serviceList = new HashSet<TranslationProvideInfo>();
 	public void setup()
 	{ 
 		System.out.println("Translator---" + getAID().getName());
-		serviceList.add( new TranslationService("Am",80));
-		serviceList.add( new TranslationService("Am",60));
-		serviceList.add( new TranslationService("or",80));
+		
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
@@ -32,9 +30,28 @@ public class TranslatorAgents extends Agent {
 		catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
-		
+		if(agent.getAID().getLocalName().contains("AM-"))
+		{
+			    serviceList.add( new TranslationProvideInfo(TranslationService.Language.Amharic,agent.getAID(),80));
+			
+		} 
+		if(agent.getAID().getLocalName().contains("OR-"))
+		{
+				serviceList.add( new TranslationProvideInfo(TranslationService.Language.Oromifa,agent.getAID(),60));
+		} 
+		if(agent.getAID().getLocalName().contains("TR-")) 
+		{
+				serviceList.add( new TranslationProvideInfo(TranslationService.Language.Tigirigna,agent.getAID(),80));
+				
+		}
+		for(var item :serviceList)
+		{
+			System.out.println("kio");
+			System.out.println(item.getTranslatorAgent());
+		}
 		addBehaviour(new UserMessages());
 	}
+
 	public void takeDown()
 	{
 		System.out.println("Translator Closed" + getAID().getName());
@@ -45,14 +62,15 @@ public class TranslatorAgents extends Agent {
 		@Override
 		public void action() {
 			// TODO Auto-generated method stub
-			ACLMessage msg = myAgent.receive();
+			System.out.println(agent + "Waiting To Translate");
+			ACLMessage msg = this.myAgent.receive();
 			if (msg != null) 
 			{
 				try 
 				{
 					Object content = msg.getContentObject();
 					if(content.getClass().equals(TranslationRequestInfo.class)) {
-						 agent.addBehaviour(agent.new TranslationSearch((TranslationRequestInfo)content, msg));
+					 agent.addBehaviour(agent.new TranslationSearch((TranslationRequestInfo)content, msg));
 				          return;
 				     }
 				} catch (UnreadableException e) {
@@ -63,6 +81,7 @@ public class TranslatorAgents extends Agent {
 			} else {
 				System.out.println("This is No message");
 				block();
+				
 			}
 			
 		}
@@ -81,12 +100,11 @@ public class TranslatorAgents extends Agent {
 		public void action() {
 			// TODO Auto-generated method stub
         	System.out.println("search translator");
-			HashSet<TranslationService> translators = new HashSet<TranslationService>();
-			for(TranslationService item : agent.serviceList)
+			HashSet<TranslationProvideInfo> translators = new HashSet<TranslationProvideInfo>();
+			for(TranslationProvideInfo item : agent.serviceList)
 			{
 				System.out.println("sent---" + tri.language);
 				System.out.println("db---" + item.getLanguage());
-				System.out.println(tri.language != item.getLanguage());
 				if(!tri.language.equals(item.getLanguage())) 
 				{
 					continue;
@@ -109,7 +127,7 @@ public class TranslatorAgents extends Agent {
 			catch (Exception e) {
 			  System.out.println(agent +"Couldn't sent search results.");
 			}
-		}
+		} 
 		
 	}
 }
