@@ -6,7 +6,7 @@ public class TranslationProvideInfo implements Serializable, Cloneable {
 	private static final long serialVersionUID = 8246364560313449848L;
 	public TranslationService.Language language;
 	private final AID translatorAgent;
-	public float price;
+	private float price;
 	public TranslationProvideInfo(TranslationService.Language lan, AID theAgent, float payment)
 	{	
 		super();

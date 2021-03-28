@@ -1,6 +1,9 @@
 import java.awt.EventQueue;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -13,11 +16,8 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-
-
 import java.util.Set;
 
-import agent.MusicSeeker.FindAndPurchaseMusics.SelectMusic;
 
 public class UserAgent extends Agent{
 
@@ -65,12 +65,16 @@ public class UserAgent extends Agent{
 	public final class TranslateWord extends SequentialBehaviour {
 		private Set<DFAgentDescription> knownAgentsAtTimeStarted;
 		private Set<TranslationProvideInfo> elgibleTranslator = new HashSet<TranslationProvideInfo>();
-		    public TranslateWord(TranslationService.Language lan,String word) {
+//		private TranslationProvideInfo> selectedTranslator = new HashSet<TranslationProvideInfo>();    
+//		private AID selectedTranslator;
+		private TranslationService theService;
+		public TranslateWord(TranslationService.Language lan,String word) {
 		    	knownAgentsAtTimeStarted = (HashSet<DFAgentDescription>) agent.TranslationServiceList.clone();
 		    ui.addMessageToConsole("this");
 		      super.addSubBehaviour(new LookForTranslator(lan,word));
 		      super.addSubBehaviour(new ResponseFromTranslators());
-		      super.addSubBehaviour(new SelectCheapestTranslator(elgibleTranslator, word));
+		      super.addSubBehaviour(new SelectCheapestTranslator(elgibleTranslator,word));
+		      super.addSubBehaviour(new TranslateTheWord(theService));
 		    }
 			public class LookForTranslator extends OneShotBehaviour
 			{
@@ -99,9 +103,6 @@ public class UserAgent extends Agent{
 				      }
 				    }
 				}
-			
-			
-			
 			public class ResponseFromTranslators extends SimpleBehaviour {
 				
 				 
@@ -177,7 +178,7 @@ public class UserAgent extends Agent{
 			{
 				private Set<TranslationProvideInfo> tOffers;
 				private String theWord;
-				public SelectCheapestTranslator(Set<TranslationProvideInfo> tOffers,String tWord)
+				public SelectCheapestTranslator(Set<TranslationProvideInfo> tOffers,String theWord)
 				{
 					this.tOffers = tOffers;
 					this.theWord = theWord;
@@ -185,8 +186,34 @@ public class UserAgent extends Agent{
 				@Override
 				public void action() {
 					// TODO Auto-generated method stub
-					
+					var ths = Collections.min(tOffers, Comparator.comparing(s -> s.getPrice()));
+					theService = new TranslationService(theWord,ths.getLanguage(),ths.getTranslatorAgent(),ths.getPrice());
+					ui.addMessageToConsole(agent.getLocalName() + " - The slected translator is" + theService.getLanguage() + "--------"+ theService.getTranslator().getLocalName());
 				}
+				
+			}
+			public class TranslateTheWord extends OneShotBehaviour{
+				private TranslationService translate;
+				public TranslateTheWord(TranslationService translate)
+				{
+					this.translate = translate;
+				}
+				@Override
+				public void action() {
+					// TODO Auto-generated method stub
+					System.out.println("hell" + translate.getTranslator()); 
+//					ACLMessage msg = new ACLMessage(ACLMessage.AGREE);
+//					  
+//					msg.addReceiver(translate.getTranslator());
+//			           try {  
+//			             msg.setContentObject(translate);
+//			             this.myAgent.send(msg);
+//			           } catch (Exception e) {
+//			             System.out.println("agent" +  e + "Couldn't send the word");
+//			           }
+			           
+				}
+
 				
 			}
 	}

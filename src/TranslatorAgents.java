@@ -1,5 +1,8 @@
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+
+import javax.swing.SwingUtilities;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -14,6 +17,7 @@ import jade.lang.acl.UnreadableException;
 public class TranslatorAgents extends Agent {
 	private TranslatorAgents agent = this;
 	private Set<TranslationProvideInfo> serviceList = new HashSet<TranslationProvideInfo>();
+	private TranslationView ui;
 	public void setup()
 	{ 
 		System.out.println("Translator---" + getAID().getName());
@@ -30,9 +34,14 @@ public class TranslatorAgents extends Agent {
 		catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
-		if(agent.getAID().getLocalName().contains("AM-"))
+		if(agent.getAID().getLocalName().contains("AM-30"))
 		{
-			    serviceList.add( new TranslationProvideInfo(TranslationService.Language.Amharic,agent.getAID(),80));
+			    serviceList.add( new TranslationProvideInfo(TranslationService.Language.Amharic,agent.getAID(),30));
+			
+		} 
+		if(agent.getAID().getLocalName().contains("AM-40"))
+		{
+			    serviceList.add( new TranslationProvideInfo(TranslationService.Language.Amharic,agent.getAID(),40));
 			
 		} 
 		if(agent.getAID().getLocalName().contains("OR-"))
@@ -73,6 +82,10 @@ public class TranslatorAgents extends Agent {
 					 agent.addBehaviour(agent.new TranslationSearch((TranslationRequestInfo)content, msg));
 				          return;
 				     }
+					if(content.getClass().equals(TranslationService.class)) {
+						 agent.addBehaviour(agent.new TranslateWord((TranslationService)content, msg));
+					          return;
+					     }
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -130,4 +143,40 @@ public class TranslatorAgents extends Agent {
 		} 
 		
 	}
-}
+	
+	public class TranslateWord extends OneShotBehaviour {
+		TranslationService tsi;
+	    ACLMessage msg;
+	    public TranslateWord(TranslationService tsi, ACLMessage msg) {
+	      this.tsi = tsi;
+	      this.msg = msg;
+	    }
+	    public void action() {
+	        
+	        ACLMessage reply = msg.createReply();
+	        reply.setPerformative(ACLMessage.PROPOSE);
+	        try {
+	          reply.setContentObject("success");
+	          this.myAgent.send(reply);
+	          
+	          System.out.println(agent + "The word is translated" + msg.getSender().getName() + tsi.getWord());
+	          
+	          Runnable addIt = new Runnable() { 
+	            @Override
+	            public void run() {
+	            	ui.addMessageToConsole("uiid");
+	            }
+	          };
+	         
+	          SwingUtilities.invokeLater(addIt);
+	        } catch (Exception e) {
+	          System.out.println("agent Couldn't sent the word.");
+	        }
+	      }
+
+	      private String generateRandomUrl() {
+	        return "http://musicdownload.com/song/" + new Random().nextInt(9999);
+	      }
+		}
+		
+	}
