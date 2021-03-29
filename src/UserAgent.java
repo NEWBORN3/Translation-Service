@@ -19,6 +19,9 @@ import jade.lang.acl.UnreadableException;
 
 import java.util.Set;
 
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 
@@ -31,19 +34,30 @@ public class UserAgent extends Agent{
 	
 	public void setup()
 	{
-//		System.out.println("User---" + getAID().getName());
-//		DFAgentDescription dfd = new DFAgentDescription();
-//		dfd.setName(getAID());
-//		ServiceDescription sd = new ServiceDescription();
-//		sd.setType("User");
-//		sd.setName("TheUser");
-//		dfd.addServices(sd);
-//		try {
-//			DFService.register(this, dfd);
-//		}
-//		catch (FIPAException fe) {
-//			fe.printStackTrace();
-//		}
+		DFAgentDescription df = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("Translator");
+		df.addServices(sd);
+		try 
+		{
+			DFAgentDescription[] result = DFService.search(agent, df);
+			TranslationServiceList.clear();
+			for(DFAgentDescription item : result )
+			{
+				TranslationServiceList.add(item);
+				System.out.println("wer"+item.getName().getLocalName());
+			}
+		}
+		catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			     public void run() {
@@ -222,7 +236,7 @@ public class UserAgent extends Agent{
 		        private long startTime;
 		        private boolean isFirstRun = true;
 		        private String finalWord;
-		        
+		        private String Sender;
 		        public ListenAnswer() {
 		          super();
 		        }
@@ -248,7 +262,7 @@ public class UserAgent extends Agent{
 		            }
 		            
 		            ui.addMessageToConsole(agent + finalWord);
-		            
+		            Sender = msg.getSender().getLocalName();
 		            Runnable addIt = new Runnable() { 
 		              @Override
 		              public void run() {
@@ -258,7 +272,7 @@ public class UserAgent extends Agent{
 		           
 		            SwingUtilities.invokeLater(addIt);
 		          } catch (Exception e) {
-		        	  ui.addMessageToConsole(agent + "Couldn't purchase song.");
+		        	  ui.addMessageToConsole(agent + "Couldn't Translate word.");
 		          }
 		        }
 
@@ -267,7 +281,9 @@ public class UserAgent extends Agent{
 		          Runnable enableUI = new Runnable() { 
 		            @Override
 		            public void run() {
-		              ui.enableUI();
+		            	ui.TheWord.setText("");	
+		            	ui.enableUI();
+		            	ui.TheWord.setText("Sender");
 		            }
 		          };
 		          
@@ -330,6 +346,7 @@ public class UserAgent extends Agent{
 		    @Override
 		    public void action() {
 		   agent.doDelete();
+		   
   }
 }
 }

@@ -1,3 +1,5 @@
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,26 +22,35 @@ public class TranslationView extends JFrame {
 	  JPanel contentPane;
 	  List console;
 	  JButton search;
+	  JLabel TheWord;
 	  public void addMessageToConsole(String message) {
 	        console.add(message);
 	      }
+	
 	  public TranslationView(final UserAgent agent) {
 		    setResizable(false);
-		    addWindowListener(new WindowAdapter() {
-		      @Override
-		      public void windowClosed(WindowEvent e) {
-		        agent.addBehaviour(agent.new ShutdownAgent());
-		      }
-		    });
+//		    addWindowListener(new WindowAdapter() {
+//		      @Override
+//		      public void windowClosed(WindowEvent e) {
+//		        agent.addBehaviour(agent.new ShutdownAgent());
+//		        
+//		      }
+//		    });
 		    setTitle("User Agent: " + agent.getLocalName());
-		    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		    setBounds(100, 100, 640, 440);
 		    contentPane = new JPanel();
 		    contentPane.setBorder(new EmptyBorder(3, 3, 3, 3));
 		    setContentPane(contentPane);
 		    contentPane.setLayout(null);
 		    
-		    JLabel lblInfo = new JLabel("Translation Service Using Agents");
+		      TheWord = new JLabel();
+		      TheWord.setHorizontalAlignment(SwingConstants.CENTER);
+		      TheWord.setBounds(180, 160, 200, 16);
+		      TheWord.setFont(new Font("TimesNewRoman",1,14));
+		      contentPane.add(TheWord);
+		    
+		      JLabel lblInfo = new JLabel("Translation Service Using Agents");
 		    lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		    lblInfo.setVerticalAlignment(SwingConstants.TOP);
 		    lblInfo.setBounds(6, 6, 628, 21);
@@ -60,7 +71,9 @@ public class TranslationView extends JFrame {
 		    lblPricePerMusic.setHorizontalAlignment(SwingConstants.RIGHT);
 		    lblPricePerMusic.setBounds(16, 111, 170, 16);
 		    contentPane.add(lblPricePerMusic);
-		 
+		 //tO wRITE lEATER
+		  
+		    
 		    
 		    search = new JButton("Translate!");
 		    search.addActionListener(new ActionListener() {

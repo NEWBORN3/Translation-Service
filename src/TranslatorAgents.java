@@ -55,7 +55,13 @@ public class TranslatorAgents extends Agent {
 
 	public void takeDown()
 	{
-		System.out.println("Translator Closed" + getAID().getName());
+		try {
+			DFService.deregister(agent);
+			System.out.println("The Translator is Closed" + getAID().getName());
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+		
 	}
 	public class UserMessages extends CyclicBehaviour 
 	{
@@ -168,5 +174,15 @@ public class TranslatorAgents extends Agent {
 	        }
 	      }
 		}
-		
+	public class ShutdownAgent extends OneShotBehaviour {
+
+	    public void action() {
+	    	agent.doDelete();
+	    	return;
+	   
+	    }
+}
+	
 	}
+
+	
