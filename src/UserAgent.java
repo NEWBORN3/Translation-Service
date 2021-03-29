@@ -16,7 +16,10 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
 import java.util.Set;
+
+import javax.swing.SwingUtilities;
 
 
 public class UserAgent extends Agent{
@@ -74,7 +77,8 @@ public class UserAgent extends Agent{
 		      super.addSubBehaviour(new LookForTranslator(lan,word));
 		      super.addSubBehaviour(new ResponseFromTranslators());
 		      super.addSubBehaviour(new SelectCheapestTranslator(elgibleTranslator,word));
-		      super.addSubBehaviour(new TranslateTheWord(theService));
+		      super.addSubBehaviour(new TranslateTheWord());
+		      super.addSubBehaviour(new ListenAnswer());
 		    }
 			public class LookForTranslator extends OneShotBehaviour
 			{
@@ -193,29 +197,94 @@ public class UserAgent extends Agent{
 				
 			}
 			public class TranslateTheWord extends OneShotBehaviour{
-				private TranslationService translate;
-				public TranslateTheWord(TranslationService translate)
-				{
-					this.translate = translate;
-				}
 				@Override
 				public void action() {
 					// TODO Auto-generated method stub
-					System.out.println("hell" + translate.getTranslator()); 
-//					ACLMessage msg = new ACLMessage(ACLMessage.AGREE);
-//					  
-//					msg.addReceiver(translate.getTranslator());
-//			           try {  
-//			             msg.setContentObject(translate);
-//			             this.myAgent.send(msg);
-//			           } catch (Exception e) {
-//			             System.out.println("agent" +  e + "Couldn't send the word");
-//			           }
+					System.out.println("hell" + theService.getPrice()); 
+					ACLMessage msg = new ACLMessage(ACLMessage.AGREE);
+					  
+					msg.addReceiver(theService.getTranslator());
+			           try {  
+			             msg.setContentObject(theService);
+			             this.myAgent.send(msg);
+			           } catch (Exception e) {
+			             System.out.println("agent" +  e + "Couldn't send the word");
+			           }
 			           
 				}
 
 				
 			}
+		    private class ListenAnswer extends SimpleBehaviour {
+		        private int songCount = 0;
+		        private final long TIMEOUT_MS = 15000;
+		        private final long WAIT_MS = 1000;
+		        private long startTime;
+		        private boolean isFirstRun = true;
+		        private String finalWord;
+		        
+		        public ListenAnswer() {
+		          super();
+		        }
+		        
+		        @Override
+		        public void action() {
+		          if(isFirstRun) { startTime = System.currentTimeMillis(); } 
+		         
+		          System.out.println(agent +"Waiting for Response");
+		          ACLMessage msg = this.myAgent.receive();
+		          if (msg == null) { block(WAIT_MS); return; }
+		          
+		          try {
+		            if(msg.getPerformative() == ACLMessage.REFUSE) {
+		              ui.addMessageToConsole(agent + " - " +  msg.getSender().getName() + "refused me!");
+		              return;
+		            }
+		            
+		            finalWord = (String)msg.getContentObject();
+		            if(finalWord == null) { 
+		            	ui.addMessageToConsole(agent + " - " + msg.getSender().getName() + "Agent  didn't return word result, Translating failed.");
+		              return;
+		            }
+		            
+		            ui.addMessageToConsole(agent + finalWord);
+		            
+		            Runnable addIt = new Runnable() { 
+		              @Override
+		              public void run() {
+		            	  ui.addMessageToConsole(agent + " -- " + finalWord);
+		              }
+		            };
+		           
+		            SwingUtilities.invokeLater(addIt);
+		          } catch (Exception e) {
+		        	  ui.addMessageToConsole(agent + "Couldn't purchase song.");
+		          }
+		        }
+
+		        @Override
+		        public boolean done() {
+		          Runnable enableUI = new Runnable() { 
+		            @Override
+		            public void run() {
+		              ui.enableUI();
+		            }
+		          };
+		          
+		          if(System.currentTimeMillis() - startTime > TIMEOUT_MS) {
+		            System.out.println(agent + " Timeout occured while waiting for response.");
+		            SwingUtilities.invokeLater(enableUI);
+		            return true;
+		          }
+		          
+		          if(finalWord != null && !finalWord.isEmpty() ) {
+		            SwingUtilities.invokeLater(enableUI);
+		            return true;
+		          }
+		          
+		          return false;
+		        }
+		      }
 	}
 	
 	

@@ -4,9 +4,9 @@ import jade.util.leap.Serializable;
 public class TranslationService implements Cloneable, Serializable  {
 	public Language lang;
 	private AID translator;
-	private float price;
+	private double price;
 	private String word;
-	public TranslationService(String word,Language lang,AID translator, float price) {
+	public TranslationService(String word,Language lang,AID translator, double price) {
 	    super();
 	    this.word = word;
 	    this.lang = lang;
@@ -25,7 +25,7 @@ public class TranslationService implements Cloneable, Serializable  {
 	public Language getLanguage() {
 	    return this.lang;
 	}
-	public float getPrice() {
+	public double getPrice() {
 		// TODO Auto-generated method stub
 		return this.price;
 	}
@@ -36,6 +36,6 @@ public class TranslationService implements Cloneable, Serializable  {
 	public TranslationService clone() {
 	    return new TranslationService(this.getWord(), this.getLanguage(), this.translator,this.getPrice());
 	}
-	public static enum Language { Amharic, Oromifa, Tigirigna }
+	public static enum Language { Amharic, Oromifa, Tigrinya }
 	
 }

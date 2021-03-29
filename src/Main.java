@@ -34,16 +34,19 @@ public class Main {
 		AgentController TranslatorAm;
 		
 		try {
-			TranslatorAm = container.createNewAgent("AM-40 Amharic Translator","TranslatorAgents",null);
+			TranslatorAm = container.createNewAgent("AM-40 Amharic Translator","TranslatorAgents",
+					new Object[] {TranslationService.Language.Amharic,40.00});
 			TranslatorAm.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	    AgentController TranslatorAmTwo;
 		
 		try {
-			TranslatorAmTwo = container.createNewAgent("AM-30 Amharic Translator","TranslatorAgents",null);
+			TranslatorAmTwo = container.createNewAgent("AM-30 Amharic Translator","TranslatorAgents",
+					new Object[] {TranslationService.Language.Amharic,30.00});
 			TranslatorAmTwo.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
@@ -52,7 +55,8 @@ public class Main {
 //		//Oromic Translator 13
 		AgentController TranslatorOr;
 		try {
-			TranslatorOr = container.createNewAgent("OR-02 Oromo Translator","TranslatorAgents",null);
+			TranslatorOr = container.createNewAgent("OR-02 Oromo Translator","TranslatorAgents",
+					new Object[] {TranslationService.Language.Oromifa,60.00});
 			TranslatorOr.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
@@ -61,7 +65,8 @@ public class Main {
 		
 		AgentController TranslatorTr;
 		try {
-			TranslatorTr = container.createNewAgent("TR-09 Tigregena Translator","TranslatorAgents",null);
+			TranslatorTr = container.createNewAgent("TR-09 Tigregena Translator","TranslatorAgents",
+					new Object[] {TranslationService.Language.Tigrinya,50.00});
 			TranslatorTr.start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block

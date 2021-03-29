@@ -111,4 +111,7 @@ public class TranslationView extends JFrame {
 		    }
 		    
 	  }
+	  public void enableUI() {
+		    search.setEnabled(true);
+		  }
 }

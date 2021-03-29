@@ -21,41 +21,33 @@ public class TranslatorAgents extends Agent {
 	public void setup()
 	{ 
 		System.out.println("Translator---" + getAID().getName());
+		Object[] args = getArguments();
 		
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.setName(getAID());
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType("Translator");
-		sd.setName(getLocalName()+"AM");
-		dfd.addServices(sd);
-		try {
-			DFService.register(this, dfd);
-		}
-		catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-		if(agent.getAID().getLocalName().contains("AM-30"))
+		if (args != null && args.length == 2)
 		{
-			    serviceList.add( new TranslationProvideInfo(TranslationService.Language.Amharic,agent.getAID(),30));
 			
-		} 
-		if(agent.getAID().getLocalName().contains("AM-40"))
-		{
-			    serviceList.add( new TranslationProvideInfo(TranslationService.Language.Amharic,agent.getAID(),40));
+			serviceList.add( new TranslationProvideInfo((TranslationService.Language) args[0],agent.getAID(),(double)args[1]));
+			DFAgentDescription dfd = new DFAgentDescription();
+			dfd.setName(getAID());
+			ServiceDescription sd = new ServiceDescription();
+			sd.setType("Translator");
+			sd.setName(getLocalName());
+			dfd.addServices(sd);
+			try {
+				DFService.register(this, dfd);
+			}
+			catch (FIPAException fe) {
+				fe.printStackTrace();
+			} 
+		} else {
+				System.out.println("Invalid Input");
+				doDelete();
+			}
 			
-		} 
-		if(agent.getAID().getLocalName().contains("OR-"))
-		{
-				serviceList.add( new TranslationProvideInfo(TranslationService.Language.Oromifa,agent.getAID(),60));
-		} 
-		if(agent.getAID().getLocalName().contains("TR-")) 
-		{
-				serviceList.add( new TranslationProvideInfo(TranslationService.Language.Tigirigna,agent.getAID(),80));
-				
-		}
+
 		for(var item :serviceList)
 		{
-			System.out.println("kio");
+			System.out.println("Translators");
 			System.out.println(item.getTranslatorAgent());
 		}
 		addBehaviour(new UserMessages());
@@ -161,21 +153,19 @@ public class TranslatorAgents extends Agent {
 	          
 	          System.out.println(agent + "The word is translated" + msg.getSender().getName() + tsi.getWord());
 	          
-	          Runnable addIt = new Runnable() { 
-	            @Override
-	            public void run() {
-	            	ui.addMessageToConsole("uiid");
-	            }
-	          };
-	         
-	          SwingUtilities.invokeLater(addIt);
+////	          Runnable addIt = new Runnable() { 
+////	            @Override
+////	            public void run() {
+////	            	ui = new TranslationView(agent);
+////			        ui.setVisible(true);
+////	            	ui.addMessageToConsole("uiid");
+////	            }
+////	          };
+//	         
+//	          SwingUtilities.invokeLater(addIt);
 	        } catch (Exception e) {
 	          System.out.println("agent Couldn't sent the word.");
 	        }
-	      }
-
-	      private String generateRandomUrl() {
-	        return "http://musicdownload.com/song/" + new Random().nextInt(9999);
 	      }
 		}
 		
