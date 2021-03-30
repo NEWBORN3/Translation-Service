@@ -20,9 +20,9 @@ public class TranslatorAgents extends Agent {
 	private TranslationView ui;
 	public void setup()
 	{ 
-		System.out.println("Translator---" + getAID().getName());
-		Object[] args = getArguments();
+		System.out.println("Translator: " + getAID().getName());
 		
+		Object[] args = getArguments();
 		if (args != null && args.length == 2)
 		{
 			
@@ -40,15 +40,8 @@ public class TranslatorAgents extends Agent {
 				fe.printStackTrace();
 			} 
 		} else {
-				System.out.println("Invalid Input");
+				System.out.println("Invalid Translator Agent Input");
 				doDelete();
-			}
-			
-
-		for(var item :serviceList)
-		{
-			System.out.println("Translators");
-			System.out.println(item.getTranslatorAgent());
 		}
 		addBehaviour(new UserMessages());
 	}
@@ -57,7 +50,7 @@ public class TranslatorAgents extends Agent {
 	{
 		try {
 			DFService.deregister(agent);
-			System.out.println("The Translator is Closed" + getAID().getName());
+			System.out.println("The Translator is Closed: " + getAID().getName());
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}

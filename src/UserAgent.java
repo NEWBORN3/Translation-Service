@@ -157,7 +157,7 @@ public class UserAgent extends Agent{
 							elgibleTranslator.addAll(translatorReturned);
 							
 							//toRemove
-							for(var item : elgibleTranslator)
+							for(TranslationProvideInfo item : elgibleTranslator)
 							{
 							 ui.addMessageToConsole(item.getTranslatorAgent().getLocalName());
 							}
@@ -204,7 +204,7 @@ public class UserAgent extends Agent{
 				@Override
 				public void action() {
 					// TODO Auto-generated method stub
-					var ths = Collections.min(tOffers, Comparator.comparing(s -> s.getPrice()));
+					TranslationProvideInfo ths = Collections.min(tOffers, Comparator.comparing(s -> s.getPrice()));
 					theService = new TranslationService(theWord,ths.getLanguage(),ths.getTranslatorAgent(),ths.getPrice());
 					ui.addMessageToConsole(agent.getLocalName() + " - The slected translator is" + theService.getLanguage() + "--------"+ theService.getTranslator().getLocalName());
 				}

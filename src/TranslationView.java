@@ -29,13 +29,6 @@ public class TranslationView extends JFrame {
 	
 	  public TranslationView(final UserAgent agent) {
 		    setResizable(false);
-//		    addWindowListener(new WindowAdapter() {
-//		      @Override
-//		      public void windowClosed(WindowEvent e) {
-//		        agent.addBehaviour(agent.new ShutdownAgent());
-//		        
-//		      }
-//		    });
 		    setTitle("User Agent: " + agent.getLocalName());
 		    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		    setBounds(100, 100, 640, 440);
@@ -44,13 +37,13 @@ public class TranslationView extends JFrame {
 		    setContentPane(contentPane);
 		    contentPane.setLayout(null);
 		    
-		      TheWord = new JLabel();
-		      TheWord.setHorizontalAlignment(SwingConstants.CENTER);
-		      TheWord.setBounds(180, 160, 200, 16);
-		      TheWord.setFont(new Font("TimesNewRoman",1,14));
-		      contentPane.add(TheWord);
+		    TheWord = new JLabel();
+		    TheWord.setHorizontalAlignment(SwingConstants.CENTER);
+		    TheWord.setBounds(180, 160, 200, 16);
+		    TheWord.setFont(new Font("TimesNewRoman",1,14));
+		    contentPane.add(TheWord);
 		    
-		      JLabel lblInfo = new JLabel("Translation Service Using Agents");
+		    JLabel lblInfo = new JLabel("Translation Service Using Agents");
 		    lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		    lblInfo.setVerticalAlignment(SwingConstants.TOP);
 		    lblInfo.setBounds(6, 6, 628, 21);
@@ -71,30 +64,32 @@ public class TranslationView extends JFrame {
 		    lblPricePerMusic.setHorizontalAlignment(SwingConstants.RIGHT);
 		    lblPricePerMusic.setBounds(16, 111, 170, 16);
 		    contentPane.add(lblPricePerMusic);
-		 //tO wRITE lEATER
-		  
-		    
 		    
 		    search = new JButton("Translate!");
 		    search.addActionListener(new ActionListener() {
 		      @Override
 		      public void actionPerformed(ActionEvent e) {
-		       search.setEnabled(false);
+		    	  search.setEnabled(false);
 		 
-		       TranslationService.Language lan = (TranslationService.Language)languagesList.getSelectedItem();
-		       String word;
+		    	  TranslationService.Language lan = (TranslationService.Language)languagesList.getSelectedItem();
+		    	  String word;
 	
-		       try {
-		         word = englishWord.getText();
-		        
-	           
-	         }
-	       catch (StringIndexOutOfBoundsException ex) {
-	        console.add("Not a word");
-	        System.out.println(agent + "Not a word");
-	        
-	        return;
-	       }
+		    	  try {
+		    		  
+		    		  word = englishWord.getText();
+		    		  if(word.isEmpty())
+		    		  {
+		    			  console.removeAll(); 
+		    			  console.add(agent + " : Please provide a valid word");
+		    			  enableUI();
+		    			  return;
+		    		  }
+		    	  } catch (Exception ex) {
+		    		  console.removeAll();
+		    		  console.add(agent + " --  It'a not a word, Please provide a valid word");
+		    		  enableUI();
+		    		  return;
+		    	  }
 	       
 	       console.removeAll();
 	       agent.addBehaviour(agent.new TranslateWord(lan, word));
