@@ -44,8 +44,7 @@ public class UserAgent extends Agent{
 			TranslationServiceList.clear();
 			for(DFAgentDescription item : result )
 			{
-				TranslationServiceList.add(item);
-				System.out.println("wer"+item.getName().getLocalName());
+				TranslationServiceList.add(item);			
 			}
 		}
 		catch (FIPAException fe) {
@@ -61,12 +60,12 @@ public class UserAgent extends Agent{
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			     public void run() {
-			       System.out.println(agent + "Creating UI");
+			       System.out.println(agent + ": Creating UI");
 			       try {
 			         ui = new TranslationView(agent);
 			         ui.setVisible(true);
 			       } catch (Exception e) {
-			    	   System.out.println(e+ "Couldn't create UI!");
+			    	   System.out.println(e+ ": Couldn't create UI!");
 			       }
 			     }
 			   });
@@ -75,28 +74,25 @@ public class UserAgent extends Agent{
 
 		    public void takeDown()
 			{
-				System.out.println("Translator Closed" + getAID().getName());
+				System.out.println(getAID().getName() + ": Translator Service Closed. ");
 			}
 
 	
 	public final class TranslateWord extends SequentialBehaviour {
 		private Set<DFAgentDescription> knownAgentsAtTimeStarted;
 		private Set<TranslationProvideInfo> elgibleTranslator = new HashSet<TranslationProvideInfo>();
-//		private TranslationProvideInfo> selectedTranslator = new HashSet<TranslationProvideInfo>();    
-//		private AID selectedTranslator;
 		private TranslationService theService;
 		public TranslateWord(TranslationService.Language lan,String word) {
-		    	knownAgentsAtTimeStarted = (HashSet<DFAgentDescription>) agent.TranslationServiceList.clone();
-		    ui.addMessageToConsole("this");
+		      knownAgentsAtTimeStarted = (HashSet<DFAgentDescription>) agent.TranslationServiceList.clone();
 		      super.addSubBehaviour(new LookForTranslator(lan,word));
 		      super.addSubBehaviour(new ResponseFromTranslators());
 		      super.addSubBehaviour(new SelectCheapestTranslator(elgibleTranslator,word));
 		      super.addSubBehaviour(new TranslateTheWord());
 		      super.addSubBehaviour(new ListenAnswer());
 		    }
+		
 			public class LookForTranslator extends OneShotBehaviour
 			{
-
 				private TranslationService.Language theLanguage;
 				private String theWord;
 				public LookForTranslator(TranslationService.Language theLanguage,String theWord)
@@ -107,8 +103,7 @@ public class UserAgent extends Agent{
 				@Override
 				public void action() {
 					// TODO Auto-generated method stub
-					 System.out.println(agent + " Sending language request to translaters ");
-					 ui.addMessageToConsole(agent.getLocalName() +  "  Sending language request to translaters");
+					 ui.addMessageToConsole(agent.getLocalName() +  ": Looking for an elgible translators");
 				     ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				      for(DFAgentDescription df: knownAgentsAtTimeStarted) {
 				        msg.addReceiver(df.getName());
@@ -117,20 +112,18 @@ public class UserAgent extends Agent{
 				        msg.setContentObject(new TranslationRequestInfo(theLanguage,theWord));
 				        agent.send(msg);
 				      } catch (Exception e) {
-				        System.out.println(e+"Couldn't send language request to Translator.");
+				        System.out.println(agent +": Couldn't send language request to Translator.");
 				      }
 				    }
 				}
+			
 			public class ResponseFromTranslators extends SimpleBehaviour {
-				
-				 
 				 private long startTime;
 				 private int answerCount = 0;
 				 private long timeOut = 20000;
 				 private long wait = 1000;
 				 private final long TIMEOUT_MS = 15000;
-				 
-				
+			
 				public ResponseFromTranslators() {
 				        super();
 				        startTime = System.currentTimeMillis();
@@ -138,29 +131,23 @@ public class UserAgent extends Agent{
 				@Override
 				public void action() {
 					// TODO Auto-generated method stub
-					
-					ui.addMessageToConsole(agent + "Receving translation request " + answerCount);
-					ACLMessage msg = agent.receive();  // myagent and agent
+					ACLMessage msg = agent.receive();  
 					if (msg != null) 
 					{
 						try {
 							answerCount++;
 							 if(msg.getPerformative() == ACLMessage.REFUSE) {
-								 ui.addMessageToConsole(agent+ "%s refuesd the message!"+ msg.getSender().getName());
 						            return;
 						     }
 							HashSet<TranslationProvideInfo> translatorReturned = (HashSet<TranslationProvideInfo>) msg.getContentObject();
 							if(translatorReturned == null || translatorReturned.size() == 0) { 
-								ui.addMessageToConsole(agent + "No translator by the Language!" + msg.getSender().getName());
+								System.out.println(agent + "No translator" + msg.getSender().getName());
 					            return;
 					          }
 							elgibleTranslator.addAll(translatorReturned);
 							
 							//toRemove
-							for(TranslationProvideInfo item : elgibleTranslator)
-							{
-							 ui.addMessageToConsole(item.getTranslatorAgent().getLocalName());
-							}
+							
 							
 						} catch (UnreadableException e) {
 							// TODO Auto-generated catch block
@@ -168,8 +155,6 @@ public class UserAgent extends Agent{
 							System.out.println(agent + " Couldn't collect the translators language results.");
 						}
 					} else {
-						ui.addMessageToConsole("No messageL");
-						System.out.println("No messageL");
 						block();
 					}
 				}
@@ -188,7 +173,7 @@ public class UserAgent extends Agent{
 				        {
 				          return true;
 				        }
-				        
+						
 				        return false;
 				      }	
 				} 
@@ -203,18 +188,24 @@ public class UserAgent extends Agent{
 				}
 				@Override
 				public void action() {
+					ui.addMessageToConsole("-----Eligible Translators----");
+					for(TranslationProvideInfo item : elgibleTranslator)
+					{
+					    ui.addMessageToConsole(item.getTranslatorAgent().getLocalName() + "- Price :" + item.getPrice());
+					}
+					ui.addMessageToConsole("------------------");
 					// TODO Auto-generated method stub
 					TranslationProvideInfo ths = Collections.min(tOffers, Comparator.comparing(s -> s.getPrice()));
 					theService = new TranslationService(theWord,ths.getLanguage(),ths.getTranslatorAgent(),ths.getPrice());
-					ui.addMessageToConsole(agent.getLocalName() + " - The slected translator is" + theService.getLanguage() + "--------"+ theService.getTranslator().getLocalName());
+					ui.addMessageToConsole(agent.getLocalName() + ": Selects Translator - " + theService.getTranslator().getLocalName());
+					ui.addMessageToConsole("    ");
 				}
-				
 			}
+			
 			public class TranslateTheWord extends OneShotBehaviour{
 				@Override
 				public void action() {
 					// TODO Auto-generated method stub
-					System.out.println("hell" + theService.getPrice()); 
 					ACLMessage msg = new ACLMessage(ACLMessage.AGREE);
 					  
 					msg.addReceiver(theService.getTranslator());
@@ -222,13 +213,13 @@ public class UserAgent extends Agent{
 			             msg.setContentObject(theService);
 			             this.myAgent.send(msg);
 			           } catch (Exception e) {
-			             System.out.println("agent" +  e + "Couldn't send the word");
-			           }
-			           
+			             System.out.println(agent  + "Couldn't send the word");
+			             ui.addMessageToConsole(agent + "Couldn't send the word");
+			           }			           
 				}
-
 				
 			}
+			
 		    private class ListenAnswer extends SimpleBehaviour {
 		        private int songCount = 0;
 		        private final long TIMEOUT_MS = 15000;
@@ -236,43 +227,35 @@ public class UserAgent extends Agent{
 		        private long startTime;
 		        private boolean isFirstRun = true;
 		        private String finalWord;
-		        private String Sender;
 		        public ListenAnswer() {
 		          super();
 		        }
 		        
 		        @Override
 		        public void action() {
-		          if(isFirstRun) { startTime = System.currentTimeMillis(); } 
-		         
-		          System.out.println(agent +"Waiting for Response");
+		          if(isFirstRun) { startTime = System.currentTimeMillis(); }        
 		          ACLMessage msg = this.myAgent.receive();
 		          if (msg == null) { block(WAIT_MS); return; }
 		          
 		          try {
 		            if(msg.getPerformative() == ACLMessage.REFUSE) {
-		              ui.addMessageToConsole(agent + " - " +  msg.getSender().getName() + "refused me!");
+		              ui.addMessageToConsole(agent + " - " +  msg.getSender().getName() + " Refused To Translate!");
 		              return;
 		            }
 		            
 		            finalWord = (String)msg.getContentObject();
 		            if(finalWord == null) { 
-		            	ui.addMessageToConsole(agent + " - " + msg.getSender().getName() + "Agent  didn't return word result, Translating failed.");
+		            	ui.addMessageToConsole(agent + " - " + msg.getSender().getName() + " Sorry The word is not present in our archive ");
 		              return;
 		            }
-		            
-		            ui.addMessageToConsole(agent + finalWord);
-		            Sender = msg.getSender().getLocalName();
-		            Runnable addIt = new Runnable() { 
-		              @Override
-		              public void run() {
-		            	  ui.addMessageToConsole(agent + " -- " + finalWord);
-		              }
-		            };
 		           
-		            SwingUtilities.invokeLater(addIt);
+		            
+		         
+		            ui.addMessageToConsole(agent.getLocalName() +": Translation is Done succesuflly ");
+		           
+		            
 		          } catch (Exception e) {
-		        	  ui.addMessageToConsole(agent + "Couldn't Translate word.");
+		        	  ui.addMessageToConsole(agent + " Some error happend");
 		          }
 		        }
 
@@ -283,7 +266,8 @@ public class UserAgent extends Agent{
 		            public void run() {
 		            	ui.TheWord.setText("");	
 		            	ui.enableUI();
-		            	ui.TheWord.setText("Sender");
+		            	ui.TheWord.setText(finalWord);
+		            	System.out.println("Result: " + finalWord);
 		            }
 		          };
 		          
@@ -302,10 +286,6 @@ public class UserAgent extends Agent{
 		        }
 		      }
 	}
-	
-	
-	
-	
 	
 	public class TranslatorList extends TickerBehaviour 
 	{
@@ -328,27 +308,21 @@ public class UserAgent extends Agent{
 				for(DFAgentDescription item : result )
 				{
 					TranslationServiceList.add(item);
-					System.out.println("wer"+item.getName().getLocalName());
 				}
 			}
 			catch (FIPAException fe) {
 				fe.printStackTrace();
 			}
 	}
-	}
-	
+}
 
-		
-
-	
 	public class ShutdownAgent extends OneShotBehaviour {
-
 		    @Override
 		    public void action() {
-		   agent.doDelete();
+		        agent.doDelete();
 		   
-  }
-}
+		    }
+	}
 }
 	
 

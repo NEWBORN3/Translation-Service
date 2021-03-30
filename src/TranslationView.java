@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.nio.charset.Charset;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -23,6 +24,7 @@ public class TranslationView extends JFrame {
 	  List console;
 	  JButton search;
 	  JLabel TheWord;
+
 	  public void addMessageToConsole(String message) {
 	        console.add(message);
 	      }
@@ -40,7 +42,7 @@ public class TranslationView extends JFrame {
 		    TheWord = new JLabel();
 		    TheWord.setHorizontalAlignment(SwingConstants.CENTER);
 		    TheWord.setBounds(180, 160, 200, 16);
-		    TheWord.setFont(new Font("TimesNewRoman",1,14));
+		    TheWord.setFont(new Font("Nyala",1,14));
 		    contentPane.add(TheWord);
 		    
 		    JLabel lblInfo = new JLabel("Translation Service Using Agents");
@@ -82,11 +84,12 @@ public class TranslationView extends JFrame {
 		    			  console.removeAll(); 
 		    			  console.add(agent + " : Please provide a valid word");
 		    			  enableUI();
+		    			  TheWord.setText("");	
 		    			  return;
 		    		  }
 		    	  } catch (Exception ex) {
 		    		  console.removeAll();
-		    		  console.add(agent + " --  It'a not a word, Please provide a valid word");
+		    		  console.add(agent + " --  It's not a word, Please provide a valid word");
 		    		  enableUI();
 		    		  return;
 		    	  }

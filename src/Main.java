@@ -52,7 +52,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		//Oromifa Translator 13
+		//Oromifa Translator 13
 		AgentController TranslatorOr;
 		try {
 			TranslatorOr = container.createNewAgent("OR-02 Oromo Translator","TranslatorAgents",

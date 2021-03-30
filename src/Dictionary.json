@@ -1,0 +1,44 @@
+[
+    {
+        "Peace": {
+            "Amharic": "ሰላም",
+            "Oromifa": "Nagaa", 
+            "Tigrinya" :"ሰላም"
+        }
+    },
+    {
+        "Agent": {
+            "Amharic": "ወኪል",
+            "Oromifa": "Wakiila", 
+            "Tigrinya" :"ወኪል"
+        }
+    },
+    {
+        "Thought": {
+            "Amharic": "ሀሳብ",
+            "Oromifa": "Haala yaada", 
+            "Tigrinya" :"ሓሳብ"
+        }
+    },
+    {
+        "Home": {
+            "Amharic": "ቤት",
+            "Oromifa": "Mana", 
+            "Tigrinya" :"ቤት"
+        }
+    },
+    {
+        "Water": {
+            "Amharic": "ውሃ",
+            "Oromifa": "Bishaan", 
+            "Tigrinya" :"ማይ"
+        }
+    },
+    {
+        "Source": {
+            "Amharic": "ምንጭ",
+            "Oromifa": "Madda", 
+            "Tigrinya" :"ምንጪ"
+        }
+    }
+]

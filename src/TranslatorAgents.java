@@ -50,7 +50,7 @@ public class TranslatorAgents extends Agent {
 	{
 		try {
 			DFService.deregister(agent);
-			System.out.println("The Translator is Closed: " + getAID().getName());
+			System.out.println(getAID().getName() + ": Closed " );
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
@@ -80,12 +80,11 @@ public class TranslatorAgents extends Agent {
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					System.out.println(myAgent + " Couldn't");
+					System.out.println(myAgent + ": Not a vaid translation request");
 				}
 			} else {
-				System.out.println("This is No message");
+				System.out.println(agent.getLocalName() + ": No request message");
 				block();
-				
 			}
 			
 		}
@@ -103,12 +102,9 @@ public class TranslatorAgents extends Agent {
 		@Override
 		public void action() {
 			// TODO Auto-generated method stub
-        	System.out.println("search translator");
 			HashSet<TranslationProvideInfo> translators = new HashSet<TranslationProvideInfo>();
 			for(TranslationProvideInfo item : agent.serviceList)
 			{
-				System.out.println("sent---" + tri.language);
-				System.out.println("db---" + item.getLanguage());
 				if(!tri.language.equals(item.getLanguage())) 
 				{
 					continue;
@@ -117,19 +113,16 @@ public class TranslatorAgents extends Agent {
 			}
 			ACLMessage reply = msg.createReply();
 			if(translators.size() == 0) {
-		      System.out.println("Cults.");
 			  reply.setPerformative(ACLMessage.REFUSE);
 			} else {
-				System.out.println("yap");
 			  reply.setPerformative(ACLMessage.PROPOSE);
 			}
 			try {
-			  System.out.println("well");
 			  reply.setContentObject(translators);
 			  this.myAgent.send(reply);
 			} 
 			catch (Exception e) {
-			  System.out.println(agent +"Couldn't sent search results.");
+			  System.out.println(agent +" Couldn't sent search results.");
 			}
 		} 
 		
@@ -145,25 +138,17 @@ public class TranslatorAgents extends Agent {
 	    public void action() {
 	        
 	        ACLMessage reply = msg.createReply();
-	        reply.setPerformative(ACLMessage.PROPOSE);
+	        reply.setPerformative(ACLMessage.AGREE);
 	        try {
-	          reply.setContentObject("success");
+	          String rWord = WordCollection.FindWord(tsi.getWord(),tsi.lang.toString());
+//	          System.out.println("==== "+ rWord);
+	          reply.setContentObject(rWord);
 	          this.myAgent.send(reply);
 	          
-	          System.out.println(agent + "The word is translated" + msg.getSender().getName() + tsi.getWord());
+	          System.out.println(agent.getLocalName() + ": A word is translated to agent " + msg.getSender().getName());
 	          
-////	          Runnable addIt = new Runnable() { 
-////	            @Override
-////	            public void run() {
-////	            	ui = new TranslationView(agent);
-////			        ui.setVisible(true);
-////	            	ui.addMessageToConsole("uiid");
-////	            }
-////	          };
-//	         
-//	          SwingUtilities.invokeLater(addIt);
 	        } catch (Exception e) {
-	          System.out.println("agent Couldn't sent the word.");
+	          System.out.println(agent.getLocalName() + ": Couldn't sent the word.");
 	        }
 	      }
 		}
@@ -174,8 +159,7 @@ public class TranslatorAgents extends Agent {
 	    	return;
 	   
 	    }
+ }	
 }
-	
-	}
 
 	
