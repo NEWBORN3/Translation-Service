@@ -12,6 +12,8 @@ import org.json.simple.parser.*;
 public class WordCollection {
 	public static String FindWord(String tWord, String language)
 	{
+		String newWord = tWord.toLowerCase();
+		newWord = newWord.substring(0, 1).toUpperCase() + newWord.substring(1);
 		Object obj = null;
 		try {
 			obj = new JSONParser().parse(new FileReader("src/Dictionary.json"));
@@ -28,7 +30,7 @@ public class WordCollection {
         	Iterator<Map.Entry> itr1 = ((Map) itr2.next()).entrySet().iterator();
             while (itr1.hasNext()) {
                 Map.Entry pair = itr1.next();       
-                if(pair.getKey().equals(tWord))
+                if(pair.getKey().equals(newWord))
                 {
                 	JSONObject jo = (JSONObject) pair.getValue();
                 	return (String) jo.get(language);

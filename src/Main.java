@@ -19,7 +19,7 @@ public class Main {
 		Properties pr = new ExtendedProperties();
 		pr.setProperty(Profile.MAIN_HOST, "localhost");
 		pr.setProperty(Profile.MAIN_PORT, "3260");
-		pr.setProperty(Profile.GUI, "true");
+		pr.setProperty(Profile.GUI, "false");
 		Profile p = new ProfileImpl(pr);
 		Runtime r = Runtime.instance();
 		AgentContainer container = r.createMainContainer(p);
@@ -65,7 +65,7 @@ public class Main {
 		
 		AgentController TranslatorTr;
 		try {
-			TranslatorTr = container.createNewAgent("TR-09 Tigregena Translator","TranslatorAgents",
+			TranslatorTr = container.createNewAgent("TR-09 Tigrigna  Translator","TranslatorAgents",
 					new Object[] {TranslationService.Language.Tigrinya,50.00});
 			TranslatorTr.start();
 		} catch (StaleProxyException e) {
